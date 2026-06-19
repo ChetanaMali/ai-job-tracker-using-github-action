@@ -31,4 +31,4 @@ jobs:
 
     - name: Run Job Search
       run: |
-        python src/job_search.py
+        python src/job-search.py
