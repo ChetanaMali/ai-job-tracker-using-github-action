@@ -1,0 +1,49 @@
+Chetana Mali
+Cloud & DevOps Engineer | AWS | Docker | CI/CD
+chetanamali9763@gmail.com | +91 7620967481 | https://www.linkedin.com/in/chetana-mali-32aa58192/|
+https://github.com/ChetanaMali
+PROFESSIONAL SUMMARY
+Software Engineer transitioning into Cloud and DevOps with hands-on experience in AWS, Docker, Linux, Git, and CI/CD. Skilled in
+building cloud infrastructure, containerized applications, and automated deployment workflows using modern DevOps tools.
+Skills
+Cloud: AWS (IAM, EC2, VPC, ALB, ASG, S3),
+Networking: Subnets, Security Groups, NACLs, Bastion Host, VPC Peering, Internet Gateway, Nat Gateway)
+DevOps Tools: Docker, Jenkins (CI/CD), Terraform, Linux, Ansible, Git/GitHub, Jira, PM2, Nginx
+Programming: Python, Shell Scripting, C++, C#.
+Projects
+CI/CD Pipeline — Multi-Service Deployment on AWS GitHub-Link
+Tools: AWS EC2 | Jenkins | Docker | GitHub Webhooks | PM2 | Node.js | Python
+• Deployed Express (Node.js) and Flask (Python) as independent backend services on AWS EC2. Used PM2 process manager to
+ensure application persistence across EC2 instance restarts.
+• Containerized both applications using Docker and exposed on separate ports (8000, 9000) for isolated deployment. Integrated
+GitHub webhooks to trigger Jenkins pipelines automatically on every code push
+• Configured Jenkinsfile based declarative pipeline for Express and Freestyle pipeline for Flask. Troubleshooted deployment issues
+including Docker permissions, and Executor issue.
+Multi-Service Docker Deployment — Frontend, Backend & MongoDB : Github-Link
+Tools: Docker | Docker Compose | Python | MongoDB | Linux
+• Created individual Dockerfiles for frontend and backend services and tested containers independently. Configured Docker
+Compose to manage multiple containers with a custom Docker network. Implemented container communication using Docker
+service names instead of localhost.
+• Managed application configuration using environment variables and .env files. Tested and verified communication between
+frontend (8000), backend (5000), and MongoDB (27017). Used Docker commands for image building, container management,
+logs, and troubleshooting.
+Scalable & Secure 3-Tier Web Application Architecture (AWS)
+Tools: AWS VPC | EC2 | ALB | Auto Scaling | IAM | Linux
+• Designed a highly available 3-tier application architecture on AWS. Created VPC with public and private subnets across multiple
+Availability Zones. Configured Internet Gateway, NAT Gateway, Route Tables, and Security Groups.
+• Designed traffic flow using Application Load Balancer between application servers. Configured Auto Scaling architecture for
+handling traffic changes and instance recovery. Implemented Bastion Host approach for secure access to private EC2 instances.
+Experience
+Game Programmer, Apar Games - Mumbai(Remote) Dec 2023 – Present
+• Collaborated in a distributed development environment using version control systems.
+• Worked on feature implementation, debugging, and multiple software’s using different programming language.
+Cloud Intern , VisionRise Technosoft Pvt. Ltd. - Part-time / Remote Feb 2026 – Apr 2026
+• Hands-on experience with AWS services, Docker, Linux, and deployment workflows.
+• Worked on cloud environment setup and troubleshooting.
+Unity Developer, iFieldSmart Technologies - Nashik Sep 2021 – Apr 2022
+• Developed and maintained applications using C# and Unity development frameworks.
+• Implemented automated tasks including asset handling, model processing, and build workflows.
+Education
+Intellipaat,Executive Post Graduate Certification in Cloud Computing Dec 2025 – Present
+Pune University,Bachelor in Computer Engineering June 2018 – June 2022
+• CGPA: 8.84/10 CGPA | College Project: AR Restaurant Menu Card App (Click to see Project App demo video)
