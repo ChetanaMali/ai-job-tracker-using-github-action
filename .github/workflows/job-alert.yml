@@ -1,6 +1,9 @@
 name: Daily Job Alert
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: "30 2 * * *"
 

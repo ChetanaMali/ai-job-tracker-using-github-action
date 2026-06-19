@@ -1,9 +1,95 @@
 import requests
 import os
+from google import genai
 
 
 APP_ID = os.getenv("ADZUNA_APP_ID")
 APP_KEY = os.getenv("ADZUNA_APP_KEY")
+
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY")
+)
+##### AI ANALYSIS FUNCTION ######
+def analyze_job(job):
+
+    resume = open(
+        "src/resume.txt"
+    ).read()
+
+
+    prompt = f"""
+
+You are a recruiter hiring freshers for Cloud and DevOps roles.
+
+Candidate is:
+- Fresher
+- 0 years experience
+- Looking for entry-level DevOps/Cloud roles
+
+Prefer:
+- DevOps Intern
+- Junior DevOps Engineer
+- Cloud Support Engineer
+- Cloud Engineer Trainee
+
+Do not recommend senior roles.
+
+Analyze this job and return ONLY this format:
+
+Job Name:
+Company Name:
+Address/Location:
+Experience Required:
+Apply Link:
+Required Skills:
+Match Score:
+Should Apply: YES/NO
+
+Candidate Resume:
+
+{resume}
+
+
+Job Details:
+
+Role:
+{job['title']}
+
+Company:
+{job['company']}
+
+Location:
+{job['location']}
+
+Experience Required:
+{job.get('description','')}
+
+
+STRICT RULE:
+Only recommend jobs requiring:
+- 0 years experience
+- Fresher
+- 0-1 years experience
+
+Reject:
+- 2+ years
+- Senior
+- Lead
+- Experienced roles
+
+
+
+"""
+
+
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt
+    )
+
+    return response.text
+
+
 
 
 country = "in"
@@ -16,13 +102,16 @@ params = {
     "app_id": APP_ID,
     "app_key": APP_KEY,
 
-    "results_per_page": 20,
+    "results_per_page": 50,
 
     "what":
-    "DevOps Engineer OR Cloud Engineer",
+    "DevOps Engineer",
 
     "where":
-    "India"
+    "India",
+
+    "max_days_old": 10
+
 }
 
 
@@ -34,6 +123,7 @@ response = requests.get(
 
 data = response.json()
 
+print(data)
 
 jobs = data["results"]
 
@@ -44,21 +134,75 @@ keywords = [
     "kubernetes",
     "jenkins",
     "terraform",
-    "linux"
+    "linux",
+    "anisible",
+    "cloud"
 ]
 
-
+experience_keywords = [
+    "fresher",
+    "0-1 year",
+    "0 years",
+    "1 year",
+    "junior",
+    "intern",
+    "entry level",
+    "graduate"
+]
+experience_block = [
+    "2 years",
+    "3 years",
+    "4 years",
+    "5 years",
+    "6 years",
+    "7 years",
+    "8 years",
+    "10 years",
+    "minimum 2",
+    "minimum 3",
+    "minimum 5",
+    "experience required: 2",
+    "experience required: 3",
+    "experience required: 5"
+]
+senior_keywords = [
+    "senior",
+    "lead",
+    "architect",
+    "manager",
+    "5 years",
+    "7 years",
+    "10 years"
+]
+fresher_bonus = [
+    "intern",
+    "trainee",
+    "junior",
+    "entry",
+    "graduate",
+    "fresher",
+    "0-1"
+]
 matches = []
 
+jobs = data["results"]
+print("Total jobs from Adzuna:", len(jobs))
 
 for job in jobs:
-
+    print(
+        "\nJOB:",
+        job.get("title"),
+    )
     text = (
         job.get("title","")
         +
         job.get("description","")
     ).lower()
 
+    # Remove jobs needing more than 1 year experience
+
+    if any(word in text for word in experience_block):
+        continue
 
     score = 0
 
@@ -67,8 +211,23 @@ for job in jobs:
         if k in text:
             score += 1
 
+    for k in experience_keywords:
+        if k in text:
+            score += 3
+
+    for k in senior_keywords:
+        if k in text:
+            score -= 5
+    for k in fresher_bonus:
+        if k in text:
+            score += 5
+
+    print("Score:", score)
 
     if score >= 2:
+
+        
+
 
         matches.append({
 
@@ -80,6 +239,8 @@ for job in jobs:
 
             "location":
             job["location"]["display_name"],
+            
+            "description": job.get("description",""),
 
             "score":
             score,
@@ -100,3 +261,15 @@ for job in matches[:5]:
     print("Location:",job["location"])
     print("Match:",job["score"],"/10")
     print("Apply:",job["url"])
+
+    # try:
+
+    #     analysis = analyze_job(job)
+
+    # except Exception as e:
+
+    #     analysis = "AI analysis failed: " + str(e)
+
+
+    # print("\nAI Analysis:")
+    # print(analysis)
