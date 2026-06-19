@@ -29,6 +29,12 @@ jobs:
         pip install -r requirements.txt
 
 
+
     - name: Run Job Search
+      env:
+        ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+        ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
       run: |
         python src/job-search.py
