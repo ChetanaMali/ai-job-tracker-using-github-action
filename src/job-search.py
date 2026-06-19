@@ -312,17 +312,17 @@ for job in matches[:5]:
     print("Match:",job["score"],"/10")
     print("Apply:",job["url"])
 
-    # try:
+    try:
 
-    #     analysis = analyze_job(job)
+        analysis = analyze_job(job)
 
-    # except Exception as e:
+    except Exception as e:
 
-    #     analysis = "AI analysis failed: " + str(e)
+        analysis = "AI analysis failed: " + str(e)
 
 
-    # print("\nAI Analysis:")
-    # print(analysis)
+    print("\nAI Analysis:")
+    print(analysis)
     email_body += f"""
 
     ======================
