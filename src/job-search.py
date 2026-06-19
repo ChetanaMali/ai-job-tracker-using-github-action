@@ -7,9 +7,35 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+import json
+
+
 
 APP_ID = os.getenv("ADZUNA_APP_ID")
 APP_KEY = os.getenv("ADZUNA_APP_KEY")
+
+SENT_FILE = "src/sent_jobs.json"
+
+# Load already sent jobs
+def load_sent_jobs():
+
+    if not os.path.exists(SENT_FILE):
+        return []
+
+    with open(SENT_FILE, "r") as file:
+        return json.load(file)
+
+
+
+# Save sent jobs
+def save_sent_jobs(sent_jobs):
+
+    with open(SENT_FILE, "w") as file:
+        json.dump(
+            sent_jobs,
+            file,
+            indent=4
+        )
 
 client = genai.Client(
     api_key=os.getenv("GEMINI_API_KEY")
@@ -24,67 +50,67 @@ def analyze_job(job):
 
     prompt = f"""
 
-You are a recruiter hiring freshers for Cloud and DevOps roles.
+    You are a recruiter hiring freshers for Cloud and DevOps roles.
 
-Candidate is:
-- Fresher
-- 0 years experience
-- Looking for entry-level DevOps/Cloud roles
+    Candidate is:
+    - Fresher
+    - 0 years experience
+    - Looking for entry-level DevOps/Cloud roles
 
-Prefer:
-- DevOps Intern
-- Junior DevOps Engineer
-- Cloud Support Engineer
-- Cloud Engineer Trainee
+    Prefer:
+    - DevOps Intern
+    - Junior DevOps Engineer
+    - Cloud Support Engineer
+    - Cloud Engineer Trainee
 
-Do not recommend senior roles.
+    Do not recommend senior roles.
 
-Analyze this job and return ONLY this format:
+    Analyze this job and return ONLY this format:
 
-Job Name:
-Company Name:
-Address/Location:
-Experience Required:
-Apply Link:
-Required Skills:
-Match Score:
-Should Apply: YES/NO
+    Job Name:
+    Company Name:
+    Address/Location:
+    Experience Required:
+    Apply Link:
+    Required Skills:
+    Match Score:
+    Should Apply: YES/NO
 
-Candidate Resume:
+    Candidate Resume:
 
-{resume}
-
-
-Job Details:
-
-Role:
-{job['title']}
-
-Company:
-{job['company']}
-
-Location:
-{job['location']}
-
-Experience Required:
-{job.get('description','')}
+    {resume}
 
 
-STRICT RULE:
-Only recommend jobs requiring:
-- 0 years experience
-- Fresher
-- 0-1 years experience
+    Job Details:
 
-Reject:
-- 2+ years
-- Senior
-- Lead
-- Experienced roles
+    Role:
+    {job['title']}
+
+    Company:
+    {job['company']}
+
+    Location:
+    {job['location']}
+
+    Experience Required:
+    {job.get('description','')}
+
+
+    STRICT RULE:
+    Only recommend jobs requiring:
+    - 0 years experience
+    - Fresher
+    - 0-1 years experience
+
+    Reject:
+    - 2+ years
+    - Senior
+    - Lead
+    - Experienced roles
 
 
 
-"""
+    """
 
 
     response = client.models.generate_content(
@@ -139,6 +165,11 @@ def send_email(content):
 
     server.quit()
 
+page = 1
+
+import random
+
+page = random.randint(1,5)
 
 country = "in"
 
@@ -158,7 +189,8 @@ params = {
     "where":
     "India",
 
-    "max_days_old": 10
+    "max_days_old": 30,
+    "sort_by": "date"
 
 }
 
@@ -233,10 +265,18 @@ fresher_bonus = [
 ]
 matches = []
 
+sent_jobs = load_sent_jobs()
+
 jobs = data["results"]
 print("Total jobs from Adzuna:", len(jobs))
 
 for job in jobs:
+
+    job_id = job["id"]
+    # Skip already sent jobs
+    if job_id in sent_jobs:
+        continue
+
     print(
         "\nJOB:",
         job.get("title"),
@@ -273,8 +313,6 @@ for job in jobs:
     print("Score:", score)
 
     if score >= 2:
-
-        
 
 
         matches.append({
@@ -346,5 +384,20 @@ for job in matches[:5]:
     """
 
 send_email(email_body)
+# Save new jobs
+for job in matches:
+
+    sent_jobs.append(
+        job["id"]
+    )
+
+
+save_sent_jobs(sent_jobs)
+
+
+print(
+    "Saved jobs:",
+    len(sent_jobs)
+)
 
 print("Email sent successfully")
