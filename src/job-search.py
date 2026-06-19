@@ -342,7 +342,7 @@ print("\nTOP DEVOPS JOBS\n")
 email_body = ""
 
 
-for job in matches[:5]:
+for job in matches[:10]:
 
     print("----------------")
     print("Role:",job["title"])
