@@ -1,6 +1,11 @@
 import requests
 import os
+#Gemini API
 from google import genai
+#Gmail API
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 
 APP_ID = os.getenv("ADZUNA_APP_ID")
@@ -89,7 +94,50 @@ Reject:
 
     return response.text
 
+####### EMAIL FUNCTION ######
 
+def send_email(content):
+
+    sender = os.getenv("EMAIL_USER")
+    password = os.getenv("EMAIL_PASSWORD")
+    receiver = os.getenv("EMAIL_TO")
+
+
+    msg = MIMEMultipart()
+
+    msg["From"] = sender
+    msg["To"] = receiver
+    msg["Subject"] = "Daily DevOps Job Alert"
+
+
+    msg.attach(
+        MIMEText(
+            content,
+            "plain"
+        )
+    )
+
+
+    server = smtplib.SMTP(
+        "smtp.gmail.com",
+        587
+    )
+
+    server.starttls()
+
+    server.login(
+        sender,
+        password
+    )
+
+
+    server.sendmail(
+        sender,
+        receiver,
+        msg.as_string()
+    )
+
+    server.quit()
 
 
 country = "in"
@@ -252,6 +300,8 @@ for job in jobs:
 
 print("\nTOP DEVOPS JOBS\n")
 
+email_body = ""
+
 
 for job in matches[:5]:
 
@@ -273,3 +323,28 @@ for job in matches[:5]:
 
     # print("\nAI Analysis:")
     # print(analysis)
+    email_body += f"""
+
+    ======================
+
+    Job:
+    {job['title']}
+
+    Company:
+    {job['company']}
+
+    Location:
+    {job['location']}
+
+    Apply:
+    {job['url']}
+
+    AI Analysis:
+
+    {analysis}
+
+    """
+
+send_email(email_body)
+
+print("Email sent successfully")

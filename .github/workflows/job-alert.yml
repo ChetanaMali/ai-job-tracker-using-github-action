@@ -39,5 +39,9 @@ jobs:
         ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
+        EMAIL_USER: ${{ secrets.EMAIL_USER }}
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        EMAIL_TO: ${{ secrets.EMAIL_TO }}
+
       run: |
         python src/job-search.py
